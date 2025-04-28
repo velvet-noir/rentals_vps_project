@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Service(models.Model):
@@ -34,3 +35,63 @@ class ServiceSpecification(models.Model):
         ordering = ["id"]
         verbose_name = "Характеристика услуги"
         verbose_name_plural = "Характетистики услуг"
+
+
+class ApplicationStatus(models.Model):
+    # черновик(?), оформлено, принято, завершено, удалено, отменено
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Статус заявки"
+        verbose_name_plural = "Статусы заявок"
+
+
+class Application(models.Model):
+    status = models.ForeignKey(
+        ApplicationStatus, on_delete=models.CASCADE, related_name="applications"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+    user_creator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_applications",
+    )
+    user_moderator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="moderated_applications",
+    )
+
+    def __str__(self):
+        return f"Заявка {self.id} - {self.status.name} - {self.update_at}"
+
+    class Meta:
+        verbose_name = "Заявка"
+        verbose_name_plural = "Заявки"
+        ordering = ["-created_at"]
+
+
+class ApplicationService(models.Model):
+    application = models.ForeignKey(
+        Application, on_delete=models.CASCADE, related_name="services"
+    )
+    service = models.ForeignKey(
+        Service, on_delete=models.CASCADE, related_name="applications"
+    )
+
+    class Meta:
+        unique_together = ("application", "service")
+        verbose_name = "Услуга в заявке"
+        verbose_name_plural = "Услуги в заявках"
+
+    def __str__(self):
+        return f"Заявка {self.application.id} - Услуга {self.service.name}"
