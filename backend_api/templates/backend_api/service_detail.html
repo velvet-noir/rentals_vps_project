@@ -1,15 +1,20 @@
-{% extends 'vps_app/base.html' %}
+{% extends 'backend_api/base.html' %}
 
 {% block title %}{{ service.name }}{% endblock %}
 
 {% block content %}
 <div class="service-detail">
     <h2>{{ service.name }}</h2>
-    <p>{{ service.description }}</p>
-    <p>Тарифы:</p>
+    {% for spec in service.specifications.all %}
+        <p>{{ spec.description }}</p>
+    {% endfor %}
+    <p>Характеристики:</p>
     <ul>
-        {% for rate in service.rates.all %}
-            <li>{{ rate.name.title }} - {{ rate.price }}₽</li>
+        {% for spec in service.specifications.all %}
+            <li>Процессор:{{ spec.processor }}</li>
+            <li>Оперативная память: {{ spec.ram}}</li>
+            <li>Хранилище данных: {{ spec.disk }}</li>
+            <li>Скорость интернета: {{ spec.internet_speed }}</li>
         {% endfor %}
     </ul>
     <a href="{% url 'service_list' %}">Вернуться к списку услуг</a>
