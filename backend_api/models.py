@@ -72,7 +72,7 @@ class Application(models.Model):
     )
 
     def __str__(self):
-        return f"Заявка {self.id} - {self.status.name} - {self.update_at}"
+        return f"Заявка № {self.id}"
 
     class Meta:
         verbose_name = "Заявка"

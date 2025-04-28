@@ -20,6 +20,8 @@ class ServiceSpecificationAdmin(admin.ModelAdmin):
     def get_service_name(self, obj):
         return f"Характеристика: {obj.service.name}"
 
+    get_service_name.short_description = "Service"
+
 
 class ApplicationStatusAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "description")
@@ -38,7 +40,9 @@ class ApplicationAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
 
     def get_status_name(self, obj):
-        return f"Cтатус: {obj.status.name}"
+        return f"{obj.status.name}"
+
+    get_status_name.short_description = "Status"
 
 
 class ApplicationServiceAdmin(admin.ModelAdmin):
