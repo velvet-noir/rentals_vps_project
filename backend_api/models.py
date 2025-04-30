@@ -38,7 +38,6 @@ class ServiceSpecification(models.Model):
 
 
 class ApplicationStatus(models.Model):
-    # черновик(?), оформлено, принято, завершено, удалено, отменено
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(null=True, blank=True)
 
