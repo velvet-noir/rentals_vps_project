@@ -35,10 +35,10 @@ def service_detail(request, pk):
 def service_delete(request, pk):
     service = get_object_or_404(Service, pk=pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         service.is_active = False
         service.save()
 
-        return redirect('service_list')
+        return redirect("service_list")
 
-    return redirect('service_list')
+    return redirect("service_list")
