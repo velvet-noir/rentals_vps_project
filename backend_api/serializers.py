@@ -28,6 +28,14 @@ class ServiceSpecSerializer(serializers.ModelSerializer):
         ]
 
 
+class ServiceDetailSerializer(serializers.ModelSerializer):
+    specifications = ServiceSpecSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Service
+        fields = ["pk", "name", "image", "mini_description", "price", "specifications"]
+
+
 class ApplicationStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationStatus

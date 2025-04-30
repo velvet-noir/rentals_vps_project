@@ -4,8 +4,12 @@ from django.db.models import Q
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from backend_api.serializers import ServiceSerializer
-from backend_api.models import Service
+from backend_api.serializers import (
+    ServiceDetailSerializer,
+    ServiceSerializer,
+    ServiceSpecSerializer,
+)
+from backend_api.models import Service, ServiceSpecification
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
@@ -36,7 +40,7 @@ class ServiceList(APIView):
 
 class ServiceDetail(APIView):
     model_class = Service
-    serializer_class = ServiceSerializer
+    serializer_class = ServiceDetailSerializer
 
     def get(self, request, pk, format=None):
         service = get_object_or_404(self.model_class, pk=pk)
@@ -58,42 +62,43 @@ class ServiceDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# def service_list(request):
-#     query = request.GET.get("query", "")
+class ServiceSpecList(APIView):
+    model_class = ServiceSpecification
+    serializer_class = ServiceSpecSerializer
 
-#     services = Service.objects.filter(is_active=True)
+    def get(self, request, format=None):
+        services = self.model_class.objects.all()
+        serializer = self.serializer_class(services, many=True)
+        return Response(serializer.data)
 
-#     if query:
-#         services = services.filter(
-#             Q(name__icontains=query) | Q(mini_description__icontains=query)
-#         )
-
-#     return render(
-#         request,
-#         "backend_api/service_list.html",
-#         {
-#             "services": services,
-#             "query": query,
-#         },
-#     )
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# def service_detail(request, pk):
-#     service = get_object_or_404(Service, pk=pk)
+class ServiceSpecDetail(APIView):
+    model_class = ServiceSpecification
+    serializer_class = ServiceSpecSerializer
 
-#     context = {
-#         "service": service,
-#     }
-#     return render(request, "backend_api/service_detail.html", context)
+    def get(self, request, pk, format=None):
+        service = get_object_or_404(self.model_class, pk=pk)
+        serializer = self.serializer_class(service)
+        return Response(serializer.data)
 
+    def patch(self, request, pk, format=None):
+        service = get_object_or_404(self.model_class, pk=pk)
+        serializer = self.serializer_class(service, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# def service_delete(request, pk):
-#     service = get_object_or_404(Service, pk=pk)
+    def delete(self, request, pk, format=None):
+        service = get_object_or_404(self.model_class, pk=pk)
+        service.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 
-#     if request.method == "POST":
-#         service.is_active = False
-#         service.save()
-
-#         return redirect("service_list")
-
-#     return redirect("service_list")
