@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from backend_api.models import (
     Application,
     ApplicationService,
@@ -12,13 +11,21 @@ from backend_api.models import (
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ["pk", "name", "image", "mini_description", "price", "is_active"]
+        fields = ["pk", "name", "image", "mini_description", "price"]
 
 
 class ServiceSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceSpecification
-        fields = ["pk", "name", "image", "mini_description", "price", "is_active"]
+        fields = [
+            "pk",
+            "service",
+            "description",
+            "processor",
+            "ram",
+            "disk",
+            "internet_speed",
+        ]
 
 
 class ApplicationStatusSerializer(serializers.ModelSerializer):
