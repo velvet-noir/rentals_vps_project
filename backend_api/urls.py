@@ -16,6 +16,11 @@ urlpatterns = [
         views.ApplicationDetail.as_view(),
         name="application-detail",
     ),
+    path(
+        r"applic/<int:applic_id>/service/<int:service_id>",
+        views.RemoveServiceFromApplicationView.as_view(),
+        name="Remove-Service-From-Applic",
+    ),
     # path("", views.service_list, name="service_list"),
     # path("service/<int:pk>/", views.service_detail, name="service_detail"),
     # path("service/<int:pk>/delete/", views.service_delete, name="service_delete"),

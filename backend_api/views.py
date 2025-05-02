@@ -12,6 +12,7 @@ from backend_api.serializers import (
 )
 from backend_api.models import (
     Application,
+    ApplicationService,
     ApplicationStatus,
     Service,
     ServiceSpecification,
@@ -153,3 +154,13 @@ class ApplicationDetail(APIView):
             {"detail": "Заявка помечена как удалённая."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+class RemoveServiceFromApplicationView(APIView):
+    def delete(self, request, applic_id, service_id, format=None):
+        app_service = get_object_or_404(
+            ApplicationService, application_id=applic_id, service_id=service_id
+        )
+
+        app_service.delete()
+        return Response({"detail": "Услуга удалена из заявки."}, status=204)
