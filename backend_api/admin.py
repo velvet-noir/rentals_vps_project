@@ -37,7 +37,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         "user_creator",
         "user_moderator",
     )
-    ordering = ("-created_at",)
+    ordering = ("created_at",)
 
     def get_status_name(self, obj):
         return f"{obj.status.name}"

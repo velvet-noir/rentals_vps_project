@@ -39,10 +39,28 @@ class ServiceDetailSerializer(serializers.ModelSerializer):
 class ApplicationStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationStatus
-        fields = ["pk", "name", "description"]
+        fields = ["pk", "name"]
+
+
+# class ApplicationSerializer(serializers.ModelSerializer):
+#     status = ApplicationStatusSerializer(read_only=True)
+
+#     class Meta:
+#         model = Application
+#         fields = [
+#             "pk",
+#             "status",
+#             "created_at",
+#             "update_at",
+#             "user_creator",
+#             "user_moderator",
+#         ]
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
+    status = ApplicationStatusSerializer(read_only=True)
+    services = serializers.SerializerMethodField()
+
     class Meta:
         model = Application
         fields = [
@@ -52,7 +70,12 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "update_at",
             "user_creator",
             "user_moderator",
+            "services",
         ]
+
+    def get_services(self, obj):
+        services = Service.objects.filter(applications__application=obj)
+        return ServiceSerializer(services, many=True).data
 
 
 class ApplicationServiceSerializer(serializers.ModelSerializer):
